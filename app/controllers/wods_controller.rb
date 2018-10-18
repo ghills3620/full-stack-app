@@ -15,7 +15,7 @@ class WodsController < OpenReadController
 
   # POST /wods
   def create
-    @wod = current_user.wod.build(wod_params)
+    @wod = Wod.new(wod_params)
 
     if @wod.save
       render json: @wod, status: :created
@@ -41,7 +41,7 @@ class WodsController < OpenReadController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_wod
-      @wod = current_user.wod.find(params[:id])
+      @wod = Wod.find(params[:id])
     end
 
     # Only allow a trusted parameter "white list" through.
