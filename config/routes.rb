@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   resources :examples, except: %i[new edit]
   resources :wods, except: %i[new edit]
 
+
   # Custom routes
   post '/sign-up' => 'users#signup'
   post '/sign-in' => 'users#signin'
