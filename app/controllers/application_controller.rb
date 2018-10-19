@@ -54,3 +54,5 @@ class ApplicationController < ActionController::API
   private :authenticate, :current_user, :set_current_user, :record_not_found
   private :ssl_configured?, :api_request_settings
 end
+
+# version 1
