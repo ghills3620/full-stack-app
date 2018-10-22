@@ -49,3 +49,4 @@ class WodsController < OpenReadController
       params.require(:wod).permit(:user_id, :metcon, :result)
     end
 end
+# need to deploy
