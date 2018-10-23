@@ -1,6 +1,11 @@
 ![Wodify Logo](http://crossfitparadox.com/wp-content/uploads/2015/09/wodify-logo.jpe)
 
 ## Technologies Used
+[Ruby on Rails](https://rubyonrails.org/)
+  - is a server-side web application framework written in Ruby under the MIT License. Rails is a model–view–controller (MVC) framework, providing default structures for a database, a web service, and web pages
+
+[Heroku](https://heroku.com/)
+  - is a cloud platform that lets companies build, deliver, monitor and scale apps.
 
 [Javascript](https://www.javascript.com/)
   - An object-oriented computer programming language commonly used to create interactive effects within web browsers.
