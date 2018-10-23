@@ -1,349 +1,110 @@
-Rails[![General Assembly Logo](https://camo.githubusercontent.com/1a91b05b8f4d44b5bbfb83abac2b0996d8e26c92/687474703a2f2f692e696d6775722e636f6d2f6b6538555354712e706e67)](https://generalassemb.ly/education/web-development-immersive)
-
-# rails-api-template
-
-A template for starting projects with `rails-api`. Includes authentication.
-
-At the beginning of each cohort, update the versions in [`Gemfile`](Gemfile).
-
-## Prerequisites
-
--   [rails-api-examples-walkthrough](https://git.generalassemb.ly/ga-wdi-boston/rails-api-examples-walkthrough)
-
-## Dependencies
-
-Install with `bundle install`.
-
--   [`rails-api`](https://github.com/rails-api/rails-api)
--   [`rails`](https://github.com/rails/rails)
--   [`active_model_serializers`](https://github.com/rails-api/active_model_serializers)
--   [`ruby`](https://www.ruby-lang.org/en/)
--   [`postgres`](http://www.postgresql.org)
-
-## Installation
-
-### Download Template:
-1.  [Download](../../archive/master.zip) this template.
-1.  Unzip and rename the template directory (`unzip ~/Downloads/rails-api-template-master.zip`)
-1.  Move into the new project and `git init`.
-
-### Customize Template:
-1.  Empty [`README.md`](README.md) and fill with your own content.
-1.  Rename your app module in `config/application.rb` (change
-    `RailsApiTemplate`).
-1.  Rename your project database in `config/database.yml` (change
-    `'rails-api-template'`).
-
-### Setup Environment:
-1.  Install dependencies with `bundle install`.
-1.  `git add` and `git commit` your changes.
-1.  Create a `.env` for sensitive settings (`touch .env`).
-1.  Generate new `development` and `test` secrets (`bundle exec rails secret`).
-1.  Store them in `.env` with keys `SECRET_KEY_BASE_<DEVELOPMENT|TEST>`
-    respectively.
-1.  In order to make requests to your deployed API, you will need to set
-    `SECRET_KEY_BASE` in the environment of the production API (for example, using `heroku config:set` or the Heroku dashboard).
-1.  In order to make requests from your deployed client application, you will
-    need to set `CLIENT_ORIGIN` in the environment of the production API (for example, `heroku config:set CLIENT_ORIGIN=https://<github-username>.github.io`).
-    See more about deploying to heroku [rails-heroku-setup-guide](https://git.generalassemb.ly/ga-wdi-boston/rails-heroku-setup-guide)
-
-### Setup your database:
-    - bin/rails db:drop (if it already exists)
-    - bin/rails db:create
-    - bin/rails db:migrate
-    - bin/rails db:seed
-    - bin/rails db:examples
-
-  Note: Remember to follow the same commands when setting up your deployed database!
-
-### Run your server!
-1. Run the API server with `bin/rails server` or `bundle exec rails server`.
-
-## Structure
-
-This template follows the standard project structure in Rails.
-
-`curl` command scripts are stored in [`curl-scripts`](curl-scripts) with names that
-correspond to API actions.
-
-User authentication is built-in.
-
-## Tasks
-
-Developers should run these often!
-
--   `bin/rails routes` lists the endpoints available in your API.
--   `bin/rspec spec` runs automated tests.
--   `bin/rails console` opens a REPL that pre-loads the API.
--   `bin/rails db` opens your database client and loads the correct database.
--   `bin/rails server` starts the API.
--   `curl-scripts/*.sh` run various `curl` commands to test the API. See below.
-
-## API
-
-Use this as the basis for your own API documentation. Add a new third-level
-heading for your custom entities, and follow the pattern provided for the
-built-in user authentication documentation.
-
-Scripts are included in [`curl-scripts`](curl-scripts) to test built-in actions. Add your
-own scripts to test your custom API. As an alternative, you can write automated
-tests in RSpec to test your API.
-
-### Authentication
-
-| Verb   | URI Pattern            | Controller#Action |
-|--------|------------------------|-------------------|
-| POST   | `/sign-up`             | `users#signup`    |
-| POST   | `/sign-in`             | `users#signin`    |
-| PATCH  | `/change-password`     | `users#changepw`  |
-| DELETE | `/sign-out`        | `users#signout`   |
-
-#### POST /sign-up
-
-Request:
-
-```sh
-curl http://localhost:4741/sign-up \
-  --include \
-  --request POST \
-  --header "Content-Type: application/json" \
-  --data '{
-    "credentials": {
-      "email": "'"${EMAIL}"'",
-      "password": "'"${PASSWORD}"'",
-      "password_confirmation": "'"${PASSWORD}"'"
-    }
-  }'
-```
-
-```sh
-EMAIL=ava@bob.com PASSWORD=hannah curl-scripts/auth/sign-up.sh
-```
-
-Response:
-
-```md
-HTTP/1.1 201 Created
-Content-Type: application/json; charset=utf-8
-
-{
-  "user": {
-    "id": 1,
-    "email": "ava@bob.com"
-  }
-}
-```
-
-#### POST /sign-in
-
-Request:
-
-```sh
-curl http://localhost:4741/sign-in \
-  --include \
-  --request POST \
-  --header "Content-Type: application/json" \
-  --data '{
-    "credentials": {
-      "email": "'"${EMAIL}"'",
-      "password": "'"${PASSWORD}"'"
-    }
-  }'
-```
-
-```sh
-EMAIL=ava@bob.com PASSWORD=hannah curl-scripts/auth/sign-in.sh
-```
-
-Response:
-
-```md
-HTTP/1.1 200 OK
-Content-Type: application/json; charset=utf-8
-
-{
-  "user": {
-    "id": 1,
-    "email": "ava@bob.com",
-    "token": "BAhJIiVlZDIwZTMzMzQzODg5NTBmYjZlNjRlZDZlNzYxYzU2ZAY6BkVG--7e7f77f974edcf5e4887b56918f34cd9fe293b9f"
-  }
-}
-```
-
-#### PATCH /change-password
-
-Request:
-
-```sh
-curl --include --request PATCH "http://localhost:4741/change-password" \
-  --header "Authorization: Token token=$TOKEN" \
-  --header "Content-Type: application/json" \
-  --data '{
-    "passwords": {
-      "old": "'"${OLDPW}"'",
-      "new": "'"${NEWPW}"'"
-    }
-  }'
-```
-
-```sh
-OLDPW='hannah' NEWPW='elle' TOKEN='BAhJIiVlZDIwZTMzMzQzODg5NTBmYjZlNjRlZDZlNzYxYzU2ZAY6BkVG--7e7f77f974edcf5e4887b56918f34cd9fe293b9f' sh curl-scripts/auth/change-password.sh
-```
-
-Response:
-
-```md
-HTTP/1.1 204 No Content
-```
-
-#### DELETE /sign-out
-
-Request:
-
-```sh
-curl http://localhost:4741/sign-out \
-  --include \
-  --request DELETE \
-  --header "Authorization: Token token=$TOKEN"
-```
-
-```sh
-TOKEN='BAhJIiVlZDIwZTMzMzQzODg5NTBmYjZlNjRlZDZlNzYxYzU2ZAY6BkVG--7e7f77f974edcf5e4887b56918f34cd9fe293b9f' sh curl-scripts/auth/sign-out.sh
-```
-
-Response:
-
-```md
-HTTP/1.1 204 No Content
-```
-
-### Users
-
-| Verb | URI Pattern | Controller#Action |
-|------|-------------|-------------------|
-| GET  | `/users`    | `users#index`     |
-| GET  | `/users/1`  | `users#show`      |
-| PATCH| `/users/1`  | `users#update`    |
-
-#### GET /users
-
-Request:
-
-```sh
-curl http://localhost:4741/users \
-  --include \
-  --request GET \
-  --header "Authorization: Token token=$TOKEN"
-```
-
-```sh
-TOKEN=BAhJIiVlZDIwZTMzMzQzODg5NTBmYjZlNjRlZDZlNzYxYzU2ZAY6BkVG--7e7f77f974edcf5e4887b56918f34cd9fe293b9f curl-scripts/users.sh
-```
-
-Response:
-
-```md
-HTTP/1.1 200 OK
-Content-Type: application/json; charset=utf-8
-
-{
-  "users": [
-    {
-      "id": 2,
-      "email": "bob@ava.com"
-    },
-    {
-      "id": 1,
-      "email": "ava@bob.com"
-    }
-  ]
-}
-```
-
-#### GET /users/:id
-
-Request:
-
-```sh
-curl --include --request GET http://localhost:4741/users/$ID \
-  --header "Authorization: Token token=$TOKEN"
-```
-
-```sh
-ID=2 TOKEN=BAhJIiVlZDIwZTMzMzQzODg5NTBmYjZlNjRlZDZlNzYxYzU2ZAY6BkVG--7e7f77f974edcf5e4887b56918f34cd9fe293b9f curl-scripts/user.sh
-```
-
-Response:
-
-```md
-HTTP/1.1 200 OK
-Content-Type: application/json; charset=utf-8
-
-{
-  "user": {
-    "id": 2,
-    "email": "bob@ava.com"
-  }
-}
-```
-
-#### PATCH /users/:id
-
-Request:
-
-```sh
-curl "http://localhost:4741/users/${ID}" \
-  --include \
-  --request PATCH \
-  --header "Authorization: Token token=${TOKEN}" \
-  --header "Content-Type: application/json" \
-  --data '{
-    "user": {
-      "email": "'"${EMAIL}"'"
-    }
-  }'
-```
-
-```sh
-ID=1 TOKEN="BAhJIiU1NGNlYjRmMjBhM2NkZTZiNzk1MGNiYmZiYWMyY2U4MwY6BkVG--ddb1e16af0e05921aa56d771e4a2f816f2a1d46e"
-EMAIL=mike@m
-sh curl-scripts/users/user-update.sh
-```
-
-Response:
-
-```md
-HTTP/1.1 200 OK
-Content-Type: application/json; charset=utf-8
-
-{"user":{"id":1,"email":"mike@m"}}
-```
-
-### Reset Database without dropping
-
-This is not a task developers should run often, but it is sometimes necessary.
-
-**locally**
-
-```sh
-bin/rails db:migrate VERSION=0
-bin/rails db:migrate db:seed db:examples
-```
-
-**heroku**
-
-```sh
-heroku run rails db:migrate VERSION=0
-heroku run rails db:migrate db:seed db:examples
-```
-
-## Additional Resources
-- [rails-heroku-setup-guide](https://git.generalassemb.ly/ga-wdi-boston/rails-heroku-setup-guide)
-- http://guides.rubyonrails.org/api_app.html
-- https://blog.codeship.com/building-a-json-api-with-rails-5/
-
-## [License](LICENSE)
-
-1.  All content is licensed under a CC­BY­NC­SA 4.0 license.
-1.  All software code is licensed under GNU GPLv3. For commercial use or
-    alternative licensing, please contact legal@ga.co.
+![Wodify Logo](http://crossfitparadox.com/wp-content/uploads/2015/09/wodify-logo.jpe)
+
+## Technologies Used
+
+[Javascript](https://www.javascript.com/)
+  - An object-oriented computer programming language commonly used to create interactive effects within web browsers.
+
+[Handlebars](https://handlebarsjs.com/)
+  - Handlebars provides the power necessary to let you build semantic templates effectively with no frustration.
+
+[Bootstrap](https://getbootstrap.com/)
+  - Bootstrap is an open source toolkit for developing with HTML, CSS, and JS. Quickly prototype your ideas or build your entire app with our Sass variables and mixins, responsive grid system, extensive prebuilt components, and powerful plugins built on jQuery.
+
+## Unsolved Problems/User Stories
+
+Version 1
+ - Being able to style the site as I would like it to look
+ - Giving the user the ability to have a user name displayed instead of their email
+
+Version 2
+ - Non signed in User
+
+  - As a non signed in user, I want to be able to view the current workout of the day
+
+ - Signed in User
+
+  - As a signed in user, I want to be able to view the current workout of the day
+  - As a signed in user, I want to be able to input pre-made/detailed results
+    - type of workout
+    - named or custom workout
+  - As a signed in user, I want to be able to be able to see a table of named workouts
+
+ERD's:
+V1
+https://imgur.com/j76qqEa
+V2
+https://imgur.com/LvFLrh1
+
+Wire Frame:
+https://imgur.com/c6mVjVo
+https://imgur.com/8htgRoW
+
+## Project Planning
+
+Planning
+- []  Review full-stack-project-practice
+- []  Review full-stack-project-modeling-lab
+- []  Create User Stories
+- []  Create Wire Frames
+- []  Create ERD
+
+Set Up
+API
+- []  Download Rails API Template
+- []  Create a Github Repository
+- []  Deploy to Heroku
+Client
+- []  Download Browser Template
+- []  Create a Github Repository
+- []  Deploy to Github Pages
+
+API
+- []  Review rails-api-one-to-many or rails-api-many-to-many
+- []  Scaffold your resource
+- []  Test your resource's end points with curl scripts
+- []  Update resource controller to inherit from Protected or OpenRead controller
+- []  Test your resource's end points with curl scripts
+- []  Add the relationship to a User
+- []  Add User ownership to resource controller
+
+Client
+- []  Review api-token-auth
+- []  Sign Up (curl then web app)
+- []  Sign In (curl then web app)
+- []  Change Password (curl then web app)
+- []  Sign Out (curl then web page)
+- []  All API calls have success or failure messages
+- []  Review query-ajax-post
+- []  Create resource (curl then web app)
+- []  Get all of their owned resources (curl then web app)
+- []  Delete single resource (curl then web app)
+- []  Update single resource (curl then web app)
+
+Final Touches
+- []  README
+- []  Troubleshoot/Debug
+- []  Style
+
+## The Process
+
+ The process of doing this project was a lot less painstaking than the last due to
+ planning.  From the very begginning I started with knowing excatly what it was that
+ I needed to get done and sticking to the task. Small goals large victories was how I
+ was able to complete this project. One small step at a time, I have very ambitious goals
+ with this project but at my level the first step was to find the simplest things and
+ to do those and get it working. It doesnt matter how it looks at first it just needs to
+
+I ran in to issues nearly everydary working on this application. To solve these
+problems I looked back at the resources I had and was given. What toos are already
+built for me that I can take advantage of is something I looked at for every issue.
+Can I take 15 extra minutes to learn more about this and get it to work, so that my
+code is more adaptable for future itterations. Also lets not forget I didnt have to
+do this alone, fellow devs, stack overflow, and google were all at my finger tips
+help. Ive learned alot during this process and feel more confident after finishing.
+
+## Links
+
+- [Wodify Client](https://ghills3620.github.io/full-stack-client/)
+- [Wodify Server](https://wodify.herokuapp.com/)
+- [Client Read Me](https://github.com/ghills3620/full-stack-client)
