@@ -5,7 +5,8 @@ curl --include --request PATCH "http://localhost:4741/wods/${ID}" \
   --header "Authorization: Token token=${TOKEN}" \
   --data '{
     "wod": {
-    "result": "'"${RESULTS}"'"
+      "metcon": "'"${METCON}"'",
+      "result": "'"${RESULTS}"'"
     }
   }'
 
